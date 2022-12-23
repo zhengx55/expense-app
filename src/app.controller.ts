@@ -1,9 +1,12 @@
+import { CreateReportDto, UpdateReportDto } from './dtos/report.dto';
 import {
   Body,
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -18,13 +21,16 @@ export class AppController {
     return this.appService.getAllReports(type);
   }
   @Get(':id')
-  getReportById(@Param('type') type: ReportType, @Param('id') id: string) {
+  getReportById(
+    @Param('type') type: ReportType,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.appService.getReportById(type, id);
   }
 
   @Post()
   CreateReport(
-    @Body() { amount, source }: { amount: number; source: string },
+    @Body() { amount, source }: CreateReportDto,
     @Param('type') type: ReportType,
   ) {
     return this.appService.createReport(type, { amount, source });
@@ -33,14 +39,14 @@ export class AppController {
   @Put(':id')
   updateReport(
     @Param('type') type: ReportType,
-    @Param('id') id: string,
-    @Body() body: ReportBody,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: UpdateReportDto,
   ) {
     return this.appService.updateReport(type, id, body);
   }
-
+  @HttpCode(200)
   @Delete(':id')
-  DeleteReport(@Param('id') id: string) {
+  DeleteReport(@Param('id', ParseUUIDPipe) id: string) {
     return this.appService.deleteReport(id);
   }
 }

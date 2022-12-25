@@ -1,4 +1,8 @@
-import { CreateReportDto, UpdateReportDto } from './dtos/report.dto';
+import {
+  CreateReportDto,
+  ReportResponseDto,
+  UpdateReportDto,
+} from './dtos/report.dto';
 import {
   Body,
   Controller,
@@ -17,14 +21,14 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) {}
   @Get()
-  getAllReports(@Param('type') type: ReportType) {
+  getAllReports(@Param('type') type: ReportType): ReportResponseDto[] {
     return this.appService.getAllReports(type);
   }
   @Get(':id')
   getReportById(
     @Param('type') type: ReportType,
     @Param('id', ParseUUIDPipe) id: string,
-  ) {
+  ): ReportResponseDto {
     return this.appService.getReportById(type, id);
   }
 
@@ -32,7 +36,7 @@ export class AppController {
   CreateReport(
     @Body() { amount, source }: CreateReportDto,
     @Param('type') type: ReportType,
-  ) {
+  ): ReportResponseDto {
     return this.appService.createReport(type, { amount, source });
   }
 
@@ -41,9 +45,10 @@ export class AppController {
     @Param('type') type: ReportType,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() body: UpdateReportDto,
-  ) {
+  ): ReportResponseDto {
     return this.appService.updateReport(type, id, body);
   }
+
   @HttpCode(200)
   @Delete(':id')
   DeleteReport(@Param('id', ParseUUIDPipe) id: string) {
